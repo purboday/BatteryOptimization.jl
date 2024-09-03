@@ -22,20 +22,21 @@ Returns a tuple of objective value and the solution variables.
 """
 function construct_and_solve_problem(battery::Battery, prices::AbstractArray{<:Real})
     model = Model(HiGHS.Optimizer)
-    n  =  length(prices) - 1
+    n = length(prices) - 1
     l = ones(n) .* -battery.max_power_kw
     u = ones(n) .* battery.max_power_kw
-    @variable(model, l[i] <= x[i = 1:n] <= u[i])
+    @variable(model, l[i] <= x[i=1:n] <= u[i])
 
     # add constraints
     # final soc shold be >= final_soc value
-    @constraint(model, battery.capacity_kwh * (battery.final_soc - battery.initial_soc) 
-    <= sum(x[i] for i in 1:n))
+    @constraint(model, battery.capacity_kwh * (battery.final_soc - battery.initial_soc)
+                       <=
+                       sum(x[i] for i in 1:n))
 
     # # soc should be within the chosen limits
     for i in 1:n
-        @constraint(model, (battery.min_soc - battery.initial_soc) * battery.capacity_kwh 
-        <=  sum(x[k] for k in 1:i) <= (battery.max_soc - battery.initial_soc) * battery.capacity_kwh)
+        @constraint(model, (battery.min_soc - battery.initial_soc) * battery.capacity_kwh
+                           <= sum(x[k] for k in 1:i) <= (battery.max_soc - battery.initial_soc) * battery.capacity_kwh)
     end
 
     # Since charging is represented as negative power flow, we need to minimize the costs
@@ -60,13 +61,13 @@ objective value in a struct SimulationResult.
 """
 function run_simulation(start_timestamp::DateTime, end_timestamp::DateTime, market::Market, battery::Battery)
     println("Simulation running from $(start_timestamp) to $(end_timestamp)")
-    simulation_range =  start_timestamp:Hour(1):end_timestamp
-    prices = [get_price(market, timestamp = timestamp) for timestamp in simulation_range]
+    simulation_range = start_timestamp:Hour(1):end_timestamp
+    prices = [get_price(market, timestamp=timestamp) for timestamp in simulation_range]
     objective_value, power_schedule = construct_and_solve_problem(battery, prices)
     return SimulationResult(
-        DataFrame(date=collect(simulation_range), power_kw = append!(power_schedule, 0.0)),
+        DataFrame(date=collect(simulation_range), power_kw=append!(power_schedule, 0.0)),
         objective_value
-        )
+    )
 end
 
 """
@@ -77,8 +78,8 @@ capacity and the power schedule. Returns a dataframe with twwo colummns, date an
 function get_soc(initial_soc::Real, capacity_kwh::Real, power_schedule::DataFrame)
     timestamps = copy(power_schedule.date)
     soc = [initial_soc]
-    append!(soc,initial_soc .+ cumsum(power_schedule.power_kw[1:end-1]) ./capacity_kwh)
-    return DataFrame(date=timestamps, soc = soc)
+    append!(soc, initial_soc .+ cumsum(power_schedule.power_kw[1:end-1]) ./ capacity_kwh)
+    return DataFrame(date=timestamps, soc=soc)
 end
 
 end

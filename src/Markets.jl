@@ -13,9 +13,9 @@ end
 
 function load_ercot_prices()
     dfmt = dateformat"mm/dd/yyyy HH:MM:SS p"
-    price_per_mwh =  DataFrame(CSV.File("src/data/20230101-20240101 ERCOT Real-time Price.csv"; dateformat=dfmt))
+    price_per_mwh = DataFrame(CSV.File("src/data/20230101-20240101 ERCOT Real-time Price.csv"; dateformat=dfmt))
     price_per_kwh = transform(price_per_mwh, :price => (x -> x * 0.001) => :price)
-    price_per_kwh = price_per_kwh[price_per_kwh.zone .== "LZ_HOUSTON", :]
+    price_per_kwh = price_per_kwh[price_per_kwh.zone.=="LZ_HOUSTON", :]
     price_per_kwh = price_per_kwh[:, [:date, :price]]
     return price_per_kwh
 end
@@ -35,11 +35,11 @@ struct Market
             price_per_kwh = load_caiso_prices()
         elseif iso == "ERCOT"
             # get ercot prices
-            price_per_kwh =  load_ercot_prices()
+            price_per_kwh = load_ercot_prices()
         else
             error("$(iso) is not supported")
         end
-        price_per_kwh = price_per_kwh[start_timestamp - Dates.Hour(1).<= price_per_kwh.date .<= end_tiemstamp, :]
+        price_per_kwh = price_per_kwh[start_timestamp-Dates.Hour(1).<=price_per_kwh.date.<=end_tiemstamp, :]
         return new(iso, price_per_kwh)
     end
 end
@@ -49,6 +49,6 @@ end
 Get the last known price for a timestamp.
 """
 function get_price(market::Market; timestamp::DateTime)
-    prices = market.price_per_kwh[market.price_per_kwh.date .<= timestamp, :]
+    prices = market.price_per_kwh[market.price_per_kwh.date.<=timestamp, :]
     return prices[end, :price]
 end
