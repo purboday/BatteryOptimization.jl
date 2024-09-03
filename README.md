@@ -5,7 +5,7 @@
 Julia package designed for simulating the operation of battery energy storage systems (BESS) in various energy markets. The package provides tools to model battery characteristics, simulate market operations, and calculate the optimal power dispatch.
 
 ## Installation
-To get started with BatteryOptimization.jl, ensure you have Julia installed on your system (version 1.6 or later is recommended).
+To get started, ensure you have Julia installed on your system (version 1.6 or later is recommended).
 
 - Begin by cloning the repository to your local machine:
 ```

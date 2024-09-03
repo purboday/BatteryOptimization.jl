@@ -6,14 +6,14 @@ export Market, get_price
 
 function load_caiso_prices()
     dfmt = dateformat"mm/dd/yyyy HH:MM:SS p"
-    price_per_mwh = DataFrame(CSV.File("src/data/20230101-20240101 CAISO Average Price.csv"; dateformat=dfmt))
+    price_per_mwh = DataFrame(CSV.File("$(@__DIR__)/data/20230101-20240101 CAISO Average Price.csv"; dateformat=dfmt))
     price_per_kwh = transform(price_per_mwh, :price => (x -> x * 0.001) => :price)
     return price_per_kwh
 end
 
 function load_ercot_prices()
     dfmt = dateformat"mm/dd/yyyy HH:MM:SS p"
-    price_per_mwh = DataFrame(CSV.File("src/data/20230101-20240101 ERCOT Real-time Price.csv"; dateformat=dfmt))
+    price_per_mwh = DataFrame(CSV.File("$(@__DIR__)/data/20230101-20240101 ERCOT Real-time Price.csv"; dateformat=dfmt))
     price_per_kwh = transform(price_per_mwh, :price => (x -> x * 0.001) => :price)
     price_per_kwh = price_per_kwh[price_per_kwh.zone.=="LZ_HOUSTON", :]
     price_per_kwh = price_per_kwh[:, [:date, :price]]
