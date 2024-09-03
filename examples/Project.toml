@@ -1,0 +1,5 @@
+[deps]
+BatteryOptimization = "14616385-a556-4c68-83e3-3bf638911a78"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
