@@ -29,4 +29,4 @@ To run the example:
 
 The script also generates plots of the optimal power dispatched for each hour of the simulation that maximizes te revenue earned compared to the prices. A second plot shows the variation in the battery state of charge for each hour.
 
-[Simulation Results](examples/simulation_plot.svg)
+![Simulation Results](examples/simulation_plot.svg)
